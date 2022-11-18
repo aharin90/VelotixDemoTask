@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class LogUtils {
@@ -19,17 +20,20 @@ public class LogUtils {
     private static final int LEVEL = 0;
 
     private static final String DATE_TIME_RGX = "(\\d{4}-\\d{2}-\\d{2}\s\\d{2}:\\d{2}:\\d{2}.\\d{3})";
-    private String all = "";
+//    private String all = "";
 
     public ArrayList<LogModel> parseLogs(MultipartFile file) {
         try {
             InputStream inputStream  = file.getInputStream();
 
-        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-                .lines()
-                .forEach(this::handleLine);
+            Optional<String> reduce = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                    .lines()
+                    .reduce((total, line) -> total + line);
 
-        String[] split = all.split("(?=(WARN|INFO|ERROR))");
+
+//                .forEach(this::handleLine);
+
+        String[] split = reduce.get().split("(?=(WARN|INFO|ERROR))");
 
         ArrayList<LogModel> logs = new ArrayList<>();
 
@@ -47,7 +51,7 @@ public class LogUtils {
         }
     }
 
-    private void handleLine(String s) {
-        all = all.concat(s);
-    }
+//    private void handleLine(String s) {
+//        all = all.concat(s);
+//    }
 }
