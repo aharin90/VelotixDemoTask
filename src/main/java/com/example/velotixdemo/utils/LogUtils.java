@@ -9,7 +9,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 @Service
 public class LogUtils {
@@ -19,35 +22,39 @@ public class LogUtils {
     private static final int LEVEL = 0;
 
     private static final String DATE_TIME_RGX = "(\\d{4}-\\d{2}-\\d{2}\s\\d{2}:\\d{2}:\\d{2}.\\d{3})";
-    private String all = "";
 
     public ArrayList<LogModel> parseLogs(MultipartFile file) {
         try {
-            InputStream inputStream  = file.getInputStream();
+            InputStream inputStream = file.getInputStream();
 
-        new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
-                .lines()
-                .forEach(this::handleLine);
+            String[] split = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                    .lines()
+                    .reduce((total, line) -> total + line)
+                    .map(s -> s.split("(?=(WARN|INFO|ERROR))"))
+                    .orElseGet(() -> new String[0]);
 
-        String[] split = all.split("(?=(WARN|INFO|ERROR))");
+            ArrayList<LogModel> logs = new ArrayList<>();
 
-        ArrayList<LogModel> logs = new ArrayList<>();
+            for (String logRecord : split) {
+                try {
+                    String[] logData = logRecord.split("(?=" + DATE_TIME_RGX + ")|(?<=" + DATE_TIME_RGX + ")");
+                    LogModel log = new LogModel();
+                    log.setLevel(logData[LEVEL].replaceAll(":", "").trim());
+                    log.setDateTime(convertStringToDate(logData[DATE_TIME]));
+                    log.setMessage(logData[MESSAGE]);
+                    logs.add(log);
+                } catch (ParseException ignore) {
 
-        for (String logRecord : split) {
-            String[] logData = logRecord.split("(?=" + DATE_TIME_RGX + ")|(?<=" + DATE_TIME_RGX + ")");
-            LogModel log = new LogModel();
-            log.setLevel(logData[LEVEL].replaceAll(":", "").trim());
-            log.setDateTime(logData[DATE_TIME]);
-            log.setMessage(logData[MESSAGE]);
-            logs.add(log);
-        }
-        return logs;
+                }
+            }
+            return logs;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void handleLine(String s) {
-        all = all.concat(s);
+    public Date convertStringToDate(String date) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return formatter.parse(date);
     }
 }
