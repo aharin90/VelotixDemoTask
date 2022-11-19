@@ -1,6 +1,5 @@
 package com.example.velotixdemo.service;
 
-
 import com.example.velotixdemo.model.LogModel;
 import com.example.velotixdemo.repository.LogRepository;
 import com.example.velotixdemo.utils.LogUtils;
@@ -14,7 +13,6 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +30,7 @@ public class LogService {
         this.entityManager = entityManager;
         this.logUtils = logUtils;
     }
-
-
+    
     public void processLogs(MultipartFile file) {
         List<LogModel> logs = logUtils.parseLogs(file);
         persistLogs(logs);

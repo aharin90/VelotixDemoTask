@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 @Service
 public class LogUtils {
@@ -53,8 +53,8 @@ public class LogUtils {
         }
     }
 
-    public Date convertStringToDate(String date) throws ParseException {
+    public Timestamp convertStringToDate(String date) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        return formatter.parse(date);
+        return new Timestamp(formatter.parse(date).getTime());
     }
 }
