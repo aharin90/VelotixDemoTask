@@ -32,8 +32,9 @@ public class LogService {
     }
     
     public void processLogs(MultipartFile file) {
-        List<LogModel> logs = logUtils.parseLogs(file);
-        persistLogs(logs);
+        String[] logsArray = logUtils.parseLogs(file);
+        ArrayList<LogModel> logModels = logUtils.convertToModels(logsArray);
+        persistLogs(logModels);
     }
 
     public void persistLogs(List<LogModel> a) {
