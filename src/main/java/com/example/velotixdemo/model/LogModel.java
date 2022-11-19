@@ -3,7 +3,7 @@ package com.example.velotixdemo.model;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "logs")
@@ -18,18 +18,18 @@ public class LogModel implements Serializable {
     private String level;
 
     @Column(name = "dateTime")
-    private Date dateTime;
+    private Timestamp dateTime;
 
     @Lob//Used Lob instead VARCHAR while table creating. Lob can handle more than 255 symbols
     @Column(name = "message")
     private String message;
 
 
-    public Date getDateTime() {
+    public Timestamp getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(Date dateTime) {
+    public void setDateTime(Timestamp dateTime) {
         this.dateTime = dateTime;
     }
 
