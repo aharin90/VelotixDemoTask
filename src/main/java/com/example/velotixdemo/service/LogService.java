@@ -15,6 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,31 +43,30 @@ public class LogService {
         logRepo.saveAll(a);
     }
 
-    public List<LogModel> retrieveValues(String level, String dateFrom, String dateTo, String text) {
+    public List<LogModel> retrieveValues(String level, String dateFrom, String dateTo, String text) throws ParseException {
 
-        try (Session session = entityManager.unwrap(Session.class)) {
-            CriteriaBuilder cb = session.getCriteriaBuilder();
-            CriteriaQuery<LogModel> cr = cb.createQuery(LogModel.class);
-            Root<LogModel> root = cr.from(LogModel.class);
-            List<Predicate> pr = new ArrayList<>();
+        Session session = entityManager.unwrap(Session.class);
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<LogModel> cr = cb.createQuery(LogModel.class);
+        Root<LogModel> root = cr.from(LogModel.class);
+        List<Predicate> pr = new ArrayList<>();
 
-            if (dateFrom != null) {
-                pr.add(cb.equal(root.get("dateTime"), dateFrom));
-            }
-            if (level != null) {
-                pr.add(cb.equal(root.get("level"), level));
-            }
-            if (text != null) {
-                pr.add(cb.like(root.get("message"), "%" + text + "%"));
-            }
-
-            Predicate[] predicates = pr.toArray(new Predicate[0]);
-            Query<LogModel> query = session.createQuery(cr.select(root).where(predicates));
-
-            return query.getResultList();
-        } catch (Exception ignore) {
-
+        if (dateFrom != null) {
+            pr.add(cb.greaterThanOrEqualTo(root.get("dateTime"), logUtils.convertStringToDate(dateFrom)));
         }
-        return null;
+        if (dateTo != null) {
+            pr.add(cb.lessThanOrEqualTo(root.get("dateTime"), logUtils.convertStringToDate(dateTo)));
+        }
+        if (level != null) {
+            pr.add(cb.equal(root.get("level"), level));
+        }
+        if (text != null) {
+            pr.add(cb.like(root.get("message"), "%" + text + "%"));
+        }
+        Predicate[] predicates = pr.toArray(new Predicate[0]);
+        Query<LogModel> query = session.createQuery(cr.select(root).where(predicates));
+
+        session.close();
+        return query.getResultList();
     }
 }
