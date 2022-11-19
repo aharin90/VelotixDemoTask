@@ -37,10 +37,6 @@ class LogServiceTest {
     public static final String ERROR = "ERROR";
 
     @Autowired
-    private DataSource dataSource;
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-    @Autowired
     private EntityManager entityManager;
     @Autowired
     private LogRepository repository;
@@ -55,8 +51,6 @@ class LogServiceTest {
 
     @Test
     void injectedComponentsAreNotNull() {
-        assertThat(dataSource).isNotNull();
-        assertThat(jdbcTemplate).isNotNull();
         assertThat(entityManager).isNotNull();
     }
 
