@@ -23,7 +23,7 @@ public class LogUtils {
 
     private static final String DATE_TIME_RGX = "(\\d{4}-\\d{2}-\\d{2}\s\\d{2}:\\d{2}:\\d{2}.\\d{3})";
 
-    public ArrayList<LogModel> parseLogs(MultipartFile file) {
+    public String[] parseLogs(MultipartFile file) {
         try {
             InputStream inputStream = file.getInputStream();
 
@@ -33,24 +33,28 @@ public class LogUtils {
                     .map(s -> s.split("(?=(WARN|INFO|ERROR))"))
                     .orElseGet(() -> new String[0]);
 
-            ArrayList<LogModel> logs = new ArrayList<>();
-
-            for (String logRecord : split) {
-                try {
-                    String[] logData = logRecord.split("(?=" + DATE_TIME_RGX + ")|(?<=" + DATE_TIME_RGX + ")");
-                    LogModel log = new LogModel();
-                    log.setLevel(logData[LEVEL].replaceAll(":", "").trim());
-                    log.setDateTime(convertStringToDate(logData[DATE_TIME]));
-                    log.setMessage(logData[MESSAGE]);
-                    logs.add(log);
-                } catch (ParseException ignore) {
-
-                }
-            }
-            return logs;
+            return split;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public ArrayList<LogModel> convertToModels(String[] split) {
+        ArrayList<LogModel> logs = new ArrayList<>();
+
+        for (String logRecord : split) {
+            try {
+                String[] logData = logRecord.split("(?=" + DATE_TIME_RGX + ")|(?<=" + DATE_TIME_RGX + ")");
+                LogModel log = new LogModel();
+                log.setLevel(logData[LEVEL].replaceAll(":", "").trim());
+                log.setDateTime(convertStringToDate(logData[DATE_TIME]));
+                log.setMessage(logData[MESSAGE]);
+                logs.add(log);
+            } catch (ParseException ignore) {
+
+            }
+        }
+        return logs;
     }
 
     public Timestamp convertStringToDate(String date) throws ParseException {
