@@ -34,16 +34,8 @@ public class LogModel implements Serializable {
         this.message = message;
     }
 
-    public Timestamp getDateTime() {
-        return dateTime;
-    }
-
     public void setDateTime(Timestamp dateTime) {
         this.dateTime = dateTime;
-    }
-
-    public String getMessage() {
-        return message;
     }
 
     public void setMessage(String message) {

@@ -32,7 +32,6 @@ public class LogUtils {
                     .reduce((total, line) -> total + line)
                     .map(s -> s.split("(?=(WARN|INFO|ERROR))"))
                     .orElseGet(() -> new String[0]);
-
             return split;
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -41,7 +40,6 @@ public class LogUtils {
 
     public ArrayList<LogModel> convertToModels(String[] split) {
         ArrayList<LogModel> logs = new ArrayList<>();
-
         for (String logRecord : split) {
             try {
                 String[] logData = logRecord.split("(?=" + DATE_TIME_RGX + ")|(?<=" + DATE_TIME_RGX + ")");
@@ -50,8 +48,8 @@ public class LogUtils {
                 log.setDateTime(convertStringToDate(logData[DATE_TIME]));
                 log.setMessage(logData[MESSAGE]);
                 logs.add(log);
-            } catch (ParseException ignore) {
-
+            } catch (ParseException e) {
+                throw new RuntimeException(e);
             }
         }
         return logs;
