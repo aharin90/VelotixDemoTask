@@ -15,7 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-@Service
 public class LogUtils {
 
     private static final int DATE_TIME = 1;
