@@ -3,9 +3,9 @@ package com.example.velotixdemo.service;
 import com.example.velotixdemo.exception.FileProcessingException;
 import com.example.velotixdemo.model.LogModel;
 import com.example.velotixdemo.repository.LogRepository;
-import com.example.velotixdemo.utils.LogUtils;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-
 import java.text.ParseException;
 import java.util.List;
 
@@ -27,6 +26,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @Transactional
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LogServiceTest {
 
     public static final String DATE_FROM = "2021-03-30 01:03:40.112";
@@ -34,6 +34,7 @@ class LogServiceTest {
     public static final String WARN = "WARN";
     public static final String INFO = "INFO";
     public static final String ERROR = "ERROR";
+    public static final int EMPTY_RESULT = 0;
 
     @Autowired
     private EntityManager entityManager;
@@ -41,11 +42,10 @@ class LogServiceTest {
     private LogRepository repository;
 
     private LogService logService;
-    private final LogUtils logUtils = new LogUtils();
 
-    @BeforeEach
+    @BeforeAll
     public void init() {
-        logService = new LogService(repository, entityManager, logUtils);
+        logService = new LogService(repository, entityManager);
     }
 
     @Test
@@ -53,31 +53,31 @@ class LogServiceTest {
         assertThat(entityManager).isNotNull();
     }
 
-     @Test
-     void saveOneEntity() throws ParseException, FileProcessingException {
-         MockMultipartFile file
-                 = new MockMultipartFile(
-                 "file",
-                 "hello.txt",
-                 MediaType.TEXT_PLAIN_VALUE,
-                 "WARN : 2021-03-30 01:03:40.112 HikariPool-1 housekeeper: HikariPool$HouseKeeper: HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=47m52s667ms)."
-                         .getBytes());
-         logService.processLogs(file);
-         List<LogModel> logModels = logService.retrieveValues(WARN, DATE_FROM, DATE_TO, "HikariPool");
-         assertThat(logModels).isNotNull();
-         assertThat(logModels.size()).isEqualTo(1);
-         assertThat(logModels.get(0).getLevel()).isEqualTo(WARN);
+    @Test
+    void saveOneEntity() throws ParseException, FileProcessingException {
+        MockMultipartFile file
+                = new MockMultipartFile(
+                "file",
+                "hello.txt",
+                MediaType.TEXT_PLAIN_VALUE,
+                "WARN : 2021-03-30 01:03:40.112 HikariPool-1 housekeeper: HikariPool$HouseKeeper: HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=47m52s667ms)."
+                        .getBytes());
+        logService.processLogs(file);
+        List<LogModel> logModels = logService.retrieveValues(WARN, DATE_FROM, DATE_TO, "HikariPool");
+        assertThat(logModels).isNotNull();
+        assertThat(logModels.size()).isEqualTo(1);
+        assertThat(logModels.get(EMPTY_RESULT).getLevel()).isEqualTo(WARN);
 
-         logModels = logService.retrieveValues(INFO, null, null, null);
-         assertThat(logModels).isNotNull();
-         assertThat(logModels.size()).isEqualTo(0);
+        logModels = logService.retrieveValues(INFO, null, null, null);
+        assertThat(logModels).isNotNull();
+        assertThat(logModels.size()).isEqualTo(EMPTY_RESULT);
 
-         logModels = logService.retrieveValues(ERROR, null, null, null);
-         assertThat(logModels).isNotNull();
-         assertThat(logModels.size()).isEqualTo(0);
+        logModels = logService.retrieveValues(ERROR, null, null, null);
+        assertThat(logModels).isNotNull();
+        assertThat(logModels.size()).isEqualTo(EMPTY_RESULT);
 
-         logModels = logService.retrieveValues(WARN, null, null, "Non existing string");
-         assertThat(logModels).isNotNull();
-         assertThat(logModels.size()).isEqualTo(0);
+        logModels = logService.retrieveValues(WARN, null, null, "Non existing string");
+        assertThat(logModels).isNotNull();
+        assertThat(logModels.size()).isEqualTo(EMPTY_RESULT);
     }
 }

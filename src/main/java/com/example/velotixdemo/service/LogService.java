@@ -24,12 +24,11 @@ public class LogService {
 
     private final LogRepository logRepo;
     private final EntityManager entityManager;
-    private final LogUtils logUtils;
+    private final LogUtils logUtils = new LogUtils();
 
-    public LogService(LogRepository logRepo, EntityManager entityManager, LogUtils logUtils) {
+    public LogService(LogRepository logRepo, EntityManager entityManager) {
         this.logRepo = logRepo;
         this.entityManager = entityManager;
-        this.logUtils = logUtils;
     }
     
     public void processLogs(MultipartFile file) throws FileProcessingException {
