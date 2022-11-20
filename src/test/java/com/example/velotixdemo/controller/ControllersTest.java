@@ -63,7 +63,7 @@ public class ControllersTest  {
                 MockMvcRequestBuilders.multipart("/logs");
         mockMvc.perform(multipartRequest.file(sampleFile))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string(containsString("Something bad happened")));
+                .andExpect(content().string(containsString("Bad file content")));
     }
 
     @Test

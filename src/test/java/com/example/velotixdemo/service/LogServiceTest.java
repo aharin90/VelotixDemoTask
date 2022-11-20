@@ -1,5 +1,6 @@
 package com.example.velotixdemo.service;
 
+import com.example.velotixdemo.exception.FileProcessingException;
 import com.example.velotixdemo.model.LogModel;
 import com.example.velotixdemo.repository.LogRepository;
 import com.example.velotixdemo.utils.LogUtils;
@@ -53,7 +54,7 @@ class LogServiceTest {
     }
 
      @Test
-     void saveOneEntity() throws ParseException {
+     void saveOneEntity() throws ParseException, FileProcessingException {
          MockMultipartFile file
                  = new MockMultipartFile(
                  "file",
