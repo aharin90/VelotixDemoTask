@@ -43,7 +43,8 @@ public class LogsController {
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> handler(Exception  e) {
-        return  ResponseEntity.badRequest().body(e.toString());
+    public ResponseEntity<String> handler(Exception e) {
+        e.printStackTrace();
+        return  ResponseEntity.badRequest().body("Something bad happened");
     }
 }

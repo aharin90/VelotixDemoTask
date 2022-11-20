@@ -24,6 +24,15 @@ public class LogModel implements Serializable {
     @Column(name = "message")
     private String message;
 
+    public LogModel() {
+    }
+
+    public LogModel(long id, String level, Timestamp dateTime, String message) {
+        this.id = id;
+        this.level = level;
+        this.dateTime = dateTime;
+        this.message = message;
+    }
 
     public Timestamp getDateTime() {
         return dateTime;
