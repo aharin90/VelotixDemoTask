@@ -1,5 +1,6 @@
 package com.example.velotixdemo.service;
 
+import com.example.velotixdemo.exception.FileProcessingException;
 import com.example.velotixdemo.model.LogModel;
 import com.example.velotixdemo.repository.LogRepository;
 import com.example.velotixdemo.utils.LogUtils;
@@ -10,14 +11,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import javax.sql.DataSource;
 
 import java.text.ParseException;
 import java.util.List;
@@ -55,7 +54,7 @@ class LogServiceTest {
     }
 
      @Test
-     void saveOneEntity() throws ParseException {
+     void saveOneEntity() throws ParseException, FileProcessingException {
          MockMultipartFile file
                  = new MockMultipartFile(
                  "file",

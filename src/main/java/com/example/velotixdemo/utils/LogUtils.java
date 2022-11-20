@@ -1,5 +1,6 @@
 package com.example.velotixdemo.utils;
 
+import com.example.velotixdemo.exception.FileProcessingException;
 import com.example.velotixdemo.model.LogModel;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,16 +33,14 @@ public class LogUtils {
                     .reduce((total, line) -> total + line)
                     .map(s -> s.split("(?=(WARN|INFO|ERROR))"))
                     .orElseGet(() -> new String[0]);
-
             return split;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public ArrayList<LogModel> convertToModels(String[] split) {
+    public ArrayList<LogModel> convertToModels(String[] split) throws FileProcessingException {
         ArrayList<LogModel> logs = new ArrayList<>();
-
         for (String logRecord : split) {
             try {
                 String[] logData = logRecord.split("(?=" + DATE_TIME_RGX + ")|(?<=" + DATE_TIME_RGX + ")");
@@ -50,8 +49,8 @@ public class LogUtils {
                 log.setDateTime(convertStringToDate(logData[DATE_TIME]));
                 log.setMessage(logData[MESSAGE]);
                 logs.add(log);
-            } catch (ParseException ignore) {
-
+            } catch (Exception e) {
+                throw new FileProcessingException(e);
             }
         }
         return logs;

@@ -1,5 +1,6 @@
 package com.example.velotixdemo.service;
 
+import com.example.velotixdemo.exception.FileProcessingException;
 import com.example.velotixdemo.model.LogModel;
 import com.example.velotixdemo.repository.LogRepository;
 import com.example.velotixdemo.utils.LogUtils;
@@ -31,7 +32,7 @@ public class LogService {
         this.logUtils = logUtils;
     }
     
-    public void processLogs(MultipartFile file) {
+    public void processLogs(MultipartFile file) throws FileProcessingException {
         String[] logsArray = logUtils.parseLogs(file);
         ArrayList<LogModel> logModels = logUtils.convertToModels(logsArray);
         persistLogs(logModels);

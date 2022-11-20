@@ -1,5 +1,6 @@
 package com.example.velotixdemo.controller;
 
+import com.example.velotixdemo.exception.FileProcessingException;
 import com.example.velotixdemo.model.LogModel;
 import com.example.velotixdemo.service.LogService;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class LogsController {
     }
 
     @PostMapping
-    public void fetchLogFile(@RequestParam("file") MultipartFile file) {
+    public void fetchLogFile(@RequestParam("file") MultipartFile file) throws FileProcessingException {
         logService.processLogs(file);
     }
 
@@ -38,8 +39,15 @@ public class LogsController {
 
     @ExceptionHandler
     public ResponseEntity<String> dateParseExceptionHandler(ParseException e) {
+        e.printStackTrace();
         return ResponseEntity.badRequest()
                 .body("Wrong Date format specified. Please enter dateTo/dateFrom type of <b>yyyy-MM-dd HH:mm:ss.SSS<b>");
+    }
+    @ExceptionHandler
+    public ResponseEntity<String> fileParseExceptionHandler(FileProcessingException e) {
+        e.printStackTrace();
+        return ResponseEntity.badRequest()
+                .body("Bad file content");
     }
 
     @ExceptionHandler
