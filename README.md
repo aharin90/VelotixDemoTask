@@ -1,7 +1,7 @@
 <b><h2>Inroduction:</h2></b>
 Here is log processing application. User can run it as jar or as docker image.
-By POST  http://localhost:8080/logs url this application recieve .log file with next format of data inside it:
-LogLevel{INFO|WARN|ERROR} DateTime{"yyyy-MM-dd HH:mm:ss.SSS»} Message{line|multiple lines}
+<p>By POST  http://localhost:8080/logs url this application recieve .log file with next format of data inside it:
+<p>LogLevel{INFO|WARN|ERROR} DateTime{"yyyy-MM-dd HH:mm:ss.SSS»} Message{line|multiple lines}
 
 After this user will be able to search log in inmemory H2 database with help of API endpoint GET http://localhost:8080/logs and query params:
 
@@ -15,10 +15,10 @@ User can combine queryparams. In this case user would receive respons that corre
 
 <b><h2>Optimization ideas:</h2></b>
 
-Update API for processing file in stream while it is uploading and provide batch updates. For example save every 10000 records from List to DB
-Provide Spring Security for authorization
-Create Aspect that will convert and parse dates of any kind of view and pass it to API method
-For using in browser provide base html page for response in separate endpoint
+<p> 1. Update API for processing file in stream while it is uploading and provide batch updates. For example save every 10000 records from List to DB
+<p> 2. Provide Spring Security for authorization
+<p> 3. Create Aspect that will convert and parse dates of any kind of view and pass it to API method
+<p> 4. For using in browser provide base html page for response in separate endpoint
 
 
 <b><h2>Run as docker image:</h2></b>
